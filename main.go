@@ -1,46 +1,65 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+
+	"github.com/ayiezac78/golang-calculator/calculations"
 )
 
 func main() {
+	var firstNum, secondNum int
+	calc := calculations.Calculator{}
 
-	var operation string
-	var firstNum int
-	var secondNum int
 	appName := "Calculator"
 
 	fmt.Printf("%s\n", appName)
-	fmt.Println("Please choose operation: (+, -, *, /)")
-	fmt.Scanln(&operation)
 
-	switch operation {
-	case "+":
-		fmt.Println("Input first number")
-		fmt.Scanln(&firstNum)
-		fmt.Println("Input second number")
-		fmt.Scanln(&secondNum)
-		fmt.Println(firstNum + secondNum)
-	case "-":
-		fmt.Println("Input first number")
-		fmt.Scanln(&firstNum)
-		fmt.Println("Input second number")
-		fmt.Scanln(&secondNum)
-		fmt.Println(firstNum - secondNum)
-	case "*":
-		fmt.Println("Input first number")
-		fmt.Scanln(&firstNum)
-		fmt.Println("Input second number")
-		fmt.Scanln(&secondNum)
-		fmt.Println(firstNum * secondNum)
-	case "/":
-		fmt.Println("Input first number")
-		fmt.Scanln(&firstNum)
-		fmt.Println("Input second number")
-		fmt.Scanln(&secondNum)
-		fmt.Println(float32(firstNum) / float32(secondNum))
-	default:
-		fmt.Println("Invalid operation")
+	fmt.Print("Please choose operation: (+, -, *, /): ")
+ops:
+	for {
+		var op string
+		fmt.Scanln(&op)
+		switch op {
+		case "+":
+			inputNum(&firstNum, &secondNum)
+			fmt.Println("Result:", calc.Sum(firstNum, secondNum))
+			break ops
+		case "-":
+			inputNum(&firstNum, &secondNum)
+			fmt.Println("Result:", calc.Subtract(firstNum, secondNum))
+			break ops
+		case "*":
+			inputNum(&firstNum, &secondNum)
+			fmt.Println("Result:", calc.Multiply(firstNum, secondNum))
+			break ops
+		case "/":
+			for {
+				inputNum(&firstNum, &secondNum)
+				result, err := calc.Divide(float32(firstNum), float32(secondNum))
+				if err != nil {
+					if errors.Is(err, calculations.ErrDivideByZero) {
+						fmt.Println(err)
+						fmt.Println("Please re-input the numbers:")
+						continue // prompt numbers again
+					}
+					// unexpected error
+					fmt.Println("An unexpected error occurred:", err)
+					break ops
+				}
+				fmt.Println("Result:", result)
+				break ops
+			}
+		default:
+			fmt.Println("Invalid operation")
+			break ops
+		}
 	}
+}
+
+func inputNum(a, b *int) {
+	fmt.Print("Input first number: ")
+	fmt.Scanln(a)
+	fmt.Print("Input second number: ")
+	fmt.Scanln(b)
 }
