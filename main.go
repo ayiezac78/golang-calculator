@@ -77,7 +77,7 @@ func multiply(num1, num2 *int) {
 }
 
 func divide(num1, num2 *int) (float32, error) {
-	inputNum(&calc.Num1, &calc.Num2)
+	inputNum(num1, num2)
 	result, err := calc.Divide()
 	if err != nil {
 		if errors.Is(err, calculator.ErrDivideByZero) {
