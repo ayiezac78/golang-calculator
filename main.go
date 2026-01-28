@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ayiezac78/golang-calculator/calculations"
+	calculator "github.com/ayiezac78/golang-calculator/calculations"
 )
 
 func main() {
 	var firstNum, secondNum int
-	calc := calculations.Calculator{}
+	calc := calculator.Calculations{}
 
 	appName := "Calculator"
 
@@ -38,7 +38,7 @@ ops:
 				inputNum(&firstNum, &secondNum)
 				result, err := calc.Divide(float32(firstNum), float32(secondNum))
 				if err != nil {
-					if errors.Is(err, calculations.ErrDivideByZero) {
+					if errors.Is(err, calculator.ErrDivideByZero) {
 						fmt.Println(err)
 						fmt.Println("Please re-input the numbers:")
 						continue // prompt numbers again
