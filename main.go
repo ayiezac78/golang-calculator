@@ -8,14 +8,14 @@ import (
 )
 
 var inputOperation string = "Please choose operation: (+, -, *, /): "
+var firstNum, secondNum int
+
+var calc = calculator.Calculations{
+	Num1: firstNum,
+	Num2: secondNum,
+}
 
 func main() {
-	var firstNum, secondNum int
-	var continueOperation = bool(false)
-	calc := calculator.Calculations{
-		Num1: firstNum,
-		Num2: secondNum,
-	}
 
 	appName := "Welcome to Azriel's Calculator"
 
@@ -28,44 +28,17 @@ ops:
 		fmt.Scanln(&op)
 		switch op {
 		case "+":
-			inputNum(&calc.Num1, &calc.Num2)
-			// calc.Num1 = firstNum
-			// calc.Num2 = secondNum
-			fmt.Println("Result:", calc.Sum())
-
-			if !continueOperation {
-				wantsAnotherOperation(inputOperation)
-				continue
-			}
-
+			sum(&calc.Num1, &calc.Num2)
 			break ops
 		case "-":
-			inputNum(&calc.Num1, &calc.Num2)
-			// calc.Num1 = firstNum
-			// calc.Num2 = secondNum
-			fmt.Println("Result:", calc.Subtract())
-
+			subtract(&calc.Num1, &calc.Num2)
 			break ops
 		case "*":
-			inputNum(&calc.Num1, &calc.Num2)
-			fmt.Println("Result:", calc.Multiply())
+			multiply(&calc.Num1, &calc.Num2)
 			break ops
 		case "/":
 			for {
-				inputNum(&calc.Num1, &calc.Num2)
-				result, err := calc.Divide()
-				if err != nil {
-					if errors.Is(err, calculator.ErrDivideByZero) {
-						fmt.Println(err)
-						fmt.Println("Please re-input the numbers:")
-						continue // prompt numbers again
-					}
-					// unexpected error
-					fmt.Println("An unexpected error occurred:", err)
-					break ops
-				}
-				fmt.Println("Result:", result)
-
+				divide(&calc.Num1, &calc.Num2)
 				break ops
 			}
 		default:
@@ -73,6 +46,11 @@ ops:
 			break ops
 		}
 
+	}
+	// fmt.Println(inputOperation)
+
+	if wantsAnotherOperation() {
+		goto ops
 	}
 }
 
@@ -83,15 +61,48 @@ func inputNum(a, b *int) {
 	fmt.Scanln(b)
 }
 
-func wantsAnotherOperation(inputOperation string) bool {
+func sum(num1, num2 *int) {
+	inputNum(num1, num2)
+	fmt.Println("Result:", calc.Sum())
+}
+
+func subtract(num1, num2 *int) {
+	inputNum(num1, num2)
+	fmt.Println("Result:", calc.Subtract())
+}
+
+func multiply(num1, num2 *int) {
+	inputNum(num1, num2)
+	fmt.Println("Result:", calc.Multiply())
+}
+
+func divide(num1, num2 *int) (float32, error) {
+	inputNum(&calc.Num1, &calc.Num2)
+	result, err := calc.Divide()
+	if err != nil {
+		if errors.Is(err, calculator.ErrDivideByZero) {
+			fmt.Println(err)
+			fmt.Println("Please re-input the numbers:")
+			return divide(num1, num2) // prompt numbers again
+		}
+		// unexpected error
+		fmt.Println("An unexpected error occurred:", err)
+		return 0, err
+	}
+
+	fmt.Println("Result:", result)
+	return result, nil
+
+}
+
+func wantsAnotherOperation() bool {
 	var response string
-	fmt.Print("Do you want to perform another operation? (y/n): ")
+	fmt.Println("Do you want to perform another operation? (y/n) ")
+	fmt.Println("Press Enter to exit.")
 	fmt.Scanln(&response)
 	if response == "y" {
 		fmt.Print(inputOperation)
 		return true
-	} else {
-		return false
 	}
-	// return false
+	return false
 }
