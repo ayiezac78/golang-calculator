@@ -2,6 +2,13 @@ package calculations
 
 import "errors"
 
+type Operations interface {
+	Sum(x, y int) int
+	Subtract(x, y int) int
+	Multiply(x, y int) int
+	Divide(x, y float32) (float32, error)
+}
+
 // ErrDivideByZero is returned when an attempt is made to divide by zero.
 var ErrDivideByZero = errors.New("cannot divide by zero")
 
