@@ -7,10 +7,11 @@ import (
 	calculator "github.com/ayiezac78/golang-calculator/calculations"
 )
 
+var inputOperation string = "Please choose operation: (+, -, *, /): "
+
 func main() {
 	var firstNum, secondNum int
 	var continueOperation = bool(false)
-	var inputOperation string = "Please choose operation: (+, -, *, /): "
 	calc := calculator.Calculations{
 		Num1: firstNum,
 		Num2: secondNum,
@@ -33,8 +34,7 @@ ops:
 			fmt.Println("Result:", calc.Sum())
 
 			if !continueOperation {
-				var response string
-				wantsAnotherOperation(response, inputOperation)
+				wantsAnotherOperation(inputOperation)
 				continue
 			}
 
@@ -83,12 +83,15 @@ func inputNum(a, b *int) {
 	fmt.Scanln(b)
 }
 
-func wantsAnotherOperation(response, inputOperation string) bool {
+func wantsAnotherOperation(inputOperation string) bool {
+	var response string
 	fmt.Print("Do you want to perform another operation? (y/n): ")
 	fmt.Scanln(&response)
 	if response == "y" {
 		fmt.Print(inputOperation)
 		return true
+	} else {
+		return false
 	}
-	return false
+	// return false
 }
