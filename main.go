@@ -9,7 +9,10 @@ import (
 
 func main() {
 	var firstNum, secondNum int
-	calc := calculator.Calculations{}
+	calc := calculator.Calculations{
+		Num1: firstNum,
+		Num2: secondNum,
+	}
 
 	appName := "Calculator"
 
@@ -23,20 +26,20 @@ ops:
 		switch op {
 		case "+":
 			inputNum(&firstNum, &secondNum)
-			fmt.Println("Result:", calc.Sum(firstNum, secondNum))
+			fmt.Println("Result:", calc.Sum())
 			break ops
 		case "-":
 			inputNum(&firstNum, &secondNum)
-			fmt.Println("Result:", calc.Subtract(firstNum, secondNum))
+			fmt.Println("Result:", calc.Subtract())
 			break ops
 		case "*":
 			inputNum(&firstNum, &secondNum)
-			fmt.Println("Result:", calc.Multiply(firstNum, secondNum))
+			fmt.Println("Result:", calc.Multiply())
 			break ops
 		case "/":
 			for {
 				inputNum(&firstNum, &secondNum)
-				result, err := calc.Divide(float32(firstNum), float32(secondNum))
+				result, err := calc.Divide()
 				if err != nil {
 					if errors.Is(err, calculator.ErrDivideByZero) {
 						fmt.Println(err)
