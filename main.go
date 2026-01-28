@@ -9,6 +9,7 @@ import (
 
 func main() {
 	var firstNum, secondNum int
+	anotherOperation := bool(true)
 	calc := calculator.Calculations{
 		Num1: firstNum,
 		Num2: secondNum,
@@ -25,20 +26,24 @@ ops:
 		fmt.Scanln(&op)
 		switch op {
 		case "+":
-			inputNum(&firstNum, &secondNum)
+			inputNum(&calc.Num1, &calc.Num2)
+			// calc.Num1 = firstNum
+			// calc.Num2 = secondNum
 			fmt.Println("Result:", calc.Sum())
 			break ops
 		case "-":
-			inputNum(&firstNum, &secondNum)
+			inputNum(&calc.Num1, &calc.Num2)
+			// calc.Num1 = firstNum
+			// calc.Num2 = secondNum
 			fmt.Println("Result:", calc.Subtract())
 			break ops
 		case "*":
-			inputNum(&firstNum, &secondNum)
+			inputNum(&calc.Num1, &calc.Num2)
 			fmt.Println("Result:", calc.Multiply())
 			break ops
 		case "/":
 			for {
-				inputNum(&firstNum, &secondNum)
+				inputNum(&calc.Num1, &calc.Num2)
 				result, err := calc.Divide()
 				if err != nil {
 					if errors.Is(err, calculator.ErrDivideByZero) {
@@ -51,6 +56,20 @@ ops:
 					break ops
 				}
 				fmt.Println("Result:", result)
+
+				// ask for another operation
+				fmt.Print("Do you want to perform another operation? (y/n): ")
+				var another string
+				fmt.Scanln(&another)
+				if another == "y" || another == "Y" {
+					anotherOperation = true
+				}
+
+				if anotherOperation {
+					fmt.Print("Please choose operation: (+, -, *, /): ")
+					continue ops
+				}
+
 				break ops
 			}
 		default:

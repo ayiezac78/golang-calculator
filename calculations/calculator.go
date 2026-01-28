@@ -29,7 +29,7 @@ func (c *Calculations) Multiply() int {
 }
 
 func (c *Calculations) Divide() (float32, error) {
-	if c.Num1 == 0 {
+	if c.Num2 == 0 {
 		return 0, ErrDivideByZero
 	}
 	return float32(c.Num1) / float32(c.Num2), nil
