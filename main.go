@@ -1,108 +1,116 @@
+// main.go
 package main
 
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+
+	// "strings"
 
 	calculator "github.com/ayiezac78/golang-calculator/calculations"
 )
 
-var inputOperation string = "Please choose operation: (+, -, *, /): "
-var firstNum, secondNum int
-
-var calc = calculator.Calculations{
-	Num1: firstNum,
-	Num2: secondNum,
-}
-
 func main() {
+	fmt.Println("Welcome to Azriel's Calculator")
 
-	appName := "Welcome to Azriel's Calculator"
-
-	fmt.Printf("%s\n", appName)
-
-	fmt.Print(inputOperation)
-ops:
 	for {
-		var op string
-		fmt.Scanln(&op)
-		switch op {
-		case "+":
-			sum(&calc.Num1, &calc.Num2)
-			break ops
-		case "-":
-			subtract(&calc.Num1, &calc.Num2)
-			break ops
-		case "*":
-			multiply(&calc.Num1, &calc.Num2)
-			break ops
-		case "/":
-			for {
-				divide(&calc.Num1, &calc.Num2)
-				break ops
-			}
-		default:
-			fmt.Println("Invalid operation")
-			break ops
-		}
+		op := getOperation()
+		num1, num2 := getNumbers()
 
-	}
-	// fmt.Println(inputOperation)
+		calc := calculator.Calculations{Num1: num1, Num2: num2}
 
-	if wantsAnotherOperation() {
-		goto ops
+		performOperation(op, &calc)
+
+		wantsAnotherOperation()
 	}
 }
 
-func inputNum(a, b *int) {
+func getOperation() string {
+	var op string
+	for {
+		fmt.Print("Choose operation (+, -, *, /): ")
+		if _, err := fmt.Scanln(&op); err != nil {
+			fmt.Println("Invalid input. Please try again.")
+			continue
+		}
+
+		if op == "+" || op == "-" || op == "*" || op == "/" {
+			return op
+		}
+		fmt.Println("Invalid operation. Please try again.")
+	}
+}
+
+func getNumbers() (int, int) {
+	var num1, num2 int
 	fmt.Print("Input first number: ")
-	fmt.Scanln(a)
+	if _, err := fmt.Scanln(&num1); err != nil {
+		fmt.Println("Invalid input. Please try again.")
+		getNumbers()
+	}
 	fmt.Print("Input second number: ")
-	fmt.Scanln(b)
+	if _, err := fmt.Scanln(&num2); err != nil {
+		fmt.Println("Invalid input. Please try again.")
+		getNumbers()
+	}
+	return num1, num2
 }
 
-func sum(num1, num2 *int) {
-	inputNum(num1, num2)
-	fmt.Println("Result:", calc.Sum())
+func performOperation(op string, calc *calculator.Calculations) {
+	switch op {
+	case "+":
+		fmt.Println("Result:", calc.Sum())
+	case "-":
+		fmt.Println("Result:", calc.Subtract())
+	case "*":
+		fmt.Println("Result:", calc.Multiply())
+	case "/":
+		performDivision(calc)
+	}
 }
 
-func subtract(num1, num2 *int) {
-	inputNum(num1, num2)
-	fmt.Println("Result:", calc.Subtract())
-}
-
-func multiply(num1, num2 *int) {
-	inputNum(num1, num2)
-	fmt.Println("Result:", calc.Multiply())
-}
-
-func divide(num1, num2 *int) (float32, error) {
-	inputNum(num1, num2)
+func performDivision(calc *calculator.Calculations) {
 	result, err := calc.Divide()
+
+	for errors.Is(err, calculator.ErrDivideByZero) {
+		fmt.Println(err)
+		fmt.Println("Please re-enter the numbers:")
+		calc.Num1, calc.Num2 = getNumbers()
+		result, err = calc.Divide()
+	}
+
 	if err != nil {
-		if errors.Is(err, calculator.ErrDivideByZero) {
-			fmt.Println(err)
-			fmt.Println("Please re-input the numbers:")
-			return divide(num1, num2) // prompt numbers again
-		}
-		// unexpected error
 		fmt.Println("An unexpected error occurred:", err)
-		return 0, err
+		return
 	}
 
 	fmt.Println("Result:", result)
-	return result, nil
-
 }
 
 func wantsAnotherOperation() bool {
 	var response string
-	fmt.Println("Do you want to perform another operation? (y/n) ")
-	fmt.Println("Press Enter to exit.")
-	fmt.Scanln(&response)
-	if response == "y" {
-		fmt.Print(inputOperation)
-		return true
+
+	for {
+		fmt.Print("Perform another operation? (y/n): ")
+		_, err := fmt.Scanln(&response)
+		if err != nil {
+			fmt.Println("Error reading input:", err)
+			continue
+		}
+
+		// Convert to lowercase for easier comparison
+		response = strings.ToLower(strings.TrimSpace(response))
+
+		switch response {
+		case "y":
+			return true
+		case "n":
+			fmt.Println("Goodbye!")
+			os.Exit(0)
+		default:
+			fmt.Println("Invalid input. Response should be (y/n)")
+		}
 	}
-	return false
 }
