@@ -1,0 +1,22 @@
+# https://lefthook.dev/configuration/
+# Install hooks once per clone with: go tool lefthook install
+pre-commit:
+  parallel: true
+  jobs:
+    - name: gofmt
+      glob: "*.go"
+      run: |
+        unformatted=$(gofmt -l {staged_files})
+        [ -z "$unformatted" ] || { echo "needs gofmt -w:"; echo "$unformatted"; exit 1; }
+
+    - name: go vet
+      glob: "*.go"
+      run: go vet ./...
+
+    - name: go test
+      glob: "*.go"
+      run: go test ./...
+
+    - name: gremlins
+      glob: "*.go"
+      run: go tool gremlins unleash

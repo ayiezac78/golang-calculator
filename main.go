@@ -26,7 +26,7 @@ func main() {
 
 // app runs the calculator on stdin and returns the process exit code.
 func app(stdin io.Reader, stderr io.Writer) int {
-	fmt.Println("Welcome to Azriel's Calculator")
+	fmt.Println("Welcome to Zairelle's Calculator")
 
 	if err := run(bufio.NewScanner(stdin)); err != nil && !errors.Is(err, io.EOF) {
 		fmt.Fprintln(stderr, "Error reading input:", err)
