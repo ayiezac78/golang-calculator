@@ -6,7 +6,7 @@ import (
 )
 
 func TestOperations(t *testing.T) {
-	c := Calculations{Num1: 7, Num2: 2}
+	c := Basic{Num1: 7, Num2: 2}
 
 	if got := c.Sum(); got != 9 {
 		t.Errorf("Sum() = %v, want 9", got)
@@ -34,7 +34,7 @@ func TestDivide(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Calculations{Num1: tt.a, Num2: tt.b}.Divide()
+			got, err := Basic{Num1: tt.a, Num2: tt.b}.Divide()
 			if !errors.Is(err, tt.wantErr) {
 				t.Fatalf("Divide() error = %v, want %v", err, tt.wantErr)
 			}

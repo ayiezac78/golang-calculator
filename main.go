@@ -13,23 +13,28 @@ import (
 )
 
 // operations is the single source of truth for which operators are supported.
-var operations = map[string]func(calculator.Calculations) (float64, error){
-	"+": func(c calculator.Calculations) (float64, error) { return c.Sum(), nil },
-	"-": func(c calculator.Calculations) (float64, error) { return c.Subtract(), nil },
-	"*": func(c calculator.Calculations) (float64, error) { return c.Multiply(), nil },
-	"/": calculator.Calculations.Divide,
+var operations = map[string]func(calculator.Calculator) (float64, error){
+	"+": func(c calculator.Calculator) (float64, error) { return c.Sum(), nil },
+	"-": func(c calculator.Calculator) (float64, error) { return c.Subtract(), nil },
+	"*": func(c calculator.Calculator) (float64, error) { return c.Multiply(), nil },
+	"/": calculator.Calculator.Divide,
 }
 
 func main() {
+	os.Exit(app(os.Stdin, os.Stderr))
+}
+
+// app runs the calculator on stdin and returns the process exit code.
+func app(stdin io.Reader, stderr io.Writer) int {
 	fmt.Println("Welcome to Azriel's Calculator")
 
-	in := bufio.NewScanner(os.Stdin)
-	if err := run(in); err != nil && !errors.Is(err, io.EOF) {
-		fmt.Fprintln(os.Stderr, "Error reading input:", err)
-		os.Exit(1)
+	if err := run(bufio.NewScanner(stdin)); err != nil && !errors.Is(err, io.EOF) {
+		fmt.Fprintln(stderr, "Error reading input:", err)
+		return 1
 	}
 
 	fmt.Println("\nGoodbye!")
+	return 0
 }
 
 // run keeps calculating until the user says no or input ends (io.EOF).
@@ -52,7 +57,7 @@ func calculate(in *bufio.Scanner) error {
 		return err
 	}
 
-	calc := calculator.Calculations{}
+	calc := calculator.Basic{}
 	if calc.Num1, err = readNumber(in, "Input first number: "); err != nil {
 		return err
 	}

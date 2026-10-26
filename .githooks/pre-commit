@@ -1,0 +1,17 @@
+#!/bin/sh
+# Runs gofmt, go vet and go test before each commit.
+# Enable once per clone with: git config core.hooksPath .githooks
+set -e
+
+staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.go')
+[ -z "$staged" ] && exit 0
+
+unformatted=$(gofmt -l $staged)
+if [ -n "$unformatted" ]; then
+	echo "gofmt: these files need formatting (run: gofmt -w <file>):"
+	echo "$unformatted"
+	exit 1
+fi
+
+go vet ./...
+go test ./...

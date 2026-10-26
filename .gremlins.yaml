@@ -1,0 +1,4 @@
+unleash:
+  # Tests run in milliseconds, so the default timeout is shorter than
+  # the time it takes to compile each mutant.
+  timeout-coefficient: 20
