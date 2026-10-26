@@ -2,35 +2,33 @@ package calculator
 
 import "errors"
 
-type Arithmetic interface {
-	Sum() int
-	Subtract() int
-	Multiply() int
-	Divide() (float32, error)
-}
-
 // ErrDivideByZero is returned when an attempt is made to divide by zero.
 var ErrDivideByZero = errors.New("cannot divide by zero")
 
+// Calculations holds the two operands of a calculation.
 type Calculations struct {
-	Num1, Num2 int
+	Num1, Num2 float64
 }
 
-func (c *Calculations) Sum() int {
+// Sum returns Num1 + Num2.
+func (c Calculations) Sum() float64 {
 	return c.Num1 + c.Num2
 }
 
-func (c *Calculations) Subtract() int {
+// Subtract returns Num1 - Num2.
+func (c Calculations) Subtract() float64 {
 	return c.Num1 - c.Num2
 }
 
-func (c *Calculations) Multiply() int {
+// Multiply returns Num1 * Num2.
+func (c Calculations) Multiply() float64 {
 	return c.Num1 * c.Num2
 }
 
-func (c *Calculations) Divide() (float32, error) {
+// Divide returns Num1 / Num2, or ErrDivideByZero when Num2 is zero.
+func (c Calculations) Divide() (float64, error) {
 	if c.Num2 == 0 {
 		return 0, ErrDivideByZero
 	}
-	return float32(c.Num1) / float32(c.Num2), nil
+	return c.Num1 / c.Num2, nil
 }
