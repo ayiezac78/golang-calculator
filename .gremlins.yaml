@@ -6,3 +6,6 @@ unleash:
   threshold:
     efficacy: 99
     mutant-coverage: 99
+  # Test-only helpers; mutating them says nothing about the calculator.
+  exclude-files:
+    - "internal/"
